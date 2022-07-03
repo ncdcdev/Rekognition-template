@@ -17,6 +17,47 @@ const useApp = () => {
   const [img, setImg] = useState<string | null>(null);
   const [result, setResult] = useState<DetectLabelsCommandOutput>();
 
+  const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
+
+  const handleDevices = useCallback(async () => {
+    let unmounted = false;
+
+    const f = async () => {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        if (!unmounted) {
+          setDevices(devices.filter((f) => f.kind === "videoinput"));
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    f();
+
+    return () => {
+      unmounted = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let unmounted = false;
+    const f = async () => {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        if (!unmounted) {
+          handleDevices();
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    f();
+    return () => {
+      unmounted = true;
+    };
+  }, [handleDevices]);
+
   const capture = useCallback(async () => {
     const screenshot = webcamRef.current?.getScreenshot();
     if (screenshot) {
@@ -33,7 +74,7 @@ const useApp = () => {
     }
   }, [webcamRef]);
 
-  return { webcamRef, capture, img, result };
+  return { webcamRef, capture, img, result, devices };
 };
 
 type BoundingBoxProps = {
@@ -93,45 +134,63 @@ const BoundingBoxes = ({ labels }: BoundingBoxProps) => {
 
 export const App = () => {
   const camDiv = useRef<HTMLDivElement>(null);
-  const { webcamRef, capture, img, result } = useApp();
-  const [start, setStart] = useState<boolean>(false)
-  const personNum = useMemo(()=>{
-    return result?.Labels?.filter(f => f.Name == "Person").flatMap(f => f.Instances).length ?? 0
-  },[result])
+  const { webcamRef, capture, img, result, devices } = useApp();
+  const [start, setStart] = useState<boolean>(false);
+  const [deviceId, setDeviceId] = useState<string>();
+
+  const personNum = useMemo(() => {
+    return (
+      result?.Labels?.filter((f) => f.Name == "Person").flatMap(
+        (f) => f.Instances
+      ).length ?? 0
+    );
+  }, [result]);
+
   useEffect(() => {
-    if(!start){
-      return
+    if (!start) {
+      return;
     }
-    
-    const timer = setInterval(()=>{
-        capture()
+
+    const timer = setInterval(() => {
+      capture();
     }, 1000);
 
     return () => {
-        clearInterval(timer)
-    }
-  }, [start,capture]);
+      clearInterval(timer);
+    };
+  }, [start, capture]);
 
   return (
     <div>
       <header>
         <h1>{personNum}人</h1>
       </header>
-      <button onClick={()=>setStart(true)}>Start</button>
-      <button onClick={()=>setStart(false)}>Stop</button>
+      <button onClick={() => setStart(true)}>Start</button>
+      <button onClick={() => setStart(false)}>Stop</button>
       <div>
-          <div ref={camDiv} style={{ position: "relative" }}>
-            <Webcam
-              audio={false}
-              width={"100%"}
-              height={"100%"}
-              minScreenshotWidth={480}
-              minScreenshotHeight={320}
-              ref={webcamRef}
-              screenshotFormat="image/jpeg"
-            />
-            {start && <BoundingBoxes labels={result?.Labels}/>}
-          </div>
+        <div ref={camDiv} style={{ position: "relative" }}>
+          <Webcam
+            audio={false}
+            width={"100%"}
+            height={"100%"}
+            minScreenshotWidth={480}
+            minScreenshotHeight={320}
+            ref={webcamRef}
+            screenshotFormat="image/jpeg"
+            videoConstraints={{ deviceId: deviceId }}
+          />
+          {start && <BoundingBoxes labels={result?.Labels} />}
+        </div>
+        <div>
+          {devices.map((device, key) => (
+            <button
+              key={device.deviceId}
+              onClick={() => setDeviceId(device.deviceId)}
+            >
+              {device.label || `Device ${key + 1}`}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
