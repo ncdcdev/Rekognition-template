@@ -67,9 +67,8 @@ export const App = () => {
   return (
     <div>
       <header>
-        <h1>出席確認</h1>
+        <h1>出欠確認</h1>
       </header>
-      <h2>メンバー一覧</h2>
       <table>
         <thead>
           <tr>
@@ -99,19 +98,8 @@ export const App = () => {
               screenshotFormat="image/jpeg"
             />
           </div>
-          <button onClick={capture}>照合</button>
-          {/* <div>
-            {img && (
-              <Image src={img} alt="Screenshot" width={WIDTH} height={HEIGHT} />
-            )}
-          </div> */}
+          <button onClick={capture}>出欠確認</button>
         </div>
-        {/* <div style={{ flex: 1 }}>
-          <textarea
-            value={JSON.stringify(result)}
-            style={{ width: "100%", height: "100%" }}
-          />
-        </div> */}
       </div>
     </div>
   );

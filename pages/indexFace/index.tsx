@@ -35,7 +35,7 @@ export const App = () => {
   return (
     <div>
       <header>
-        <h1>NCDCメンバ登録</h1>
+        <h1>メンバ登録</h1>
       </header>
       <div style={{ display: "flex" }}>
         <div>
@@ -55,18 +55,7 @@ export const App = () => {
           <div className="button-container">
             <button onClick={capture}>登録</button>
           </div>
-          {/* <div>
-            {img && (
-              <Image src={img} alt="Screenshot" width={WIDTH} height={HEIGHT} />
-            )}
-          </div> */}
         </div>
-        {/* <div style={{ flex: 1 }}>
-          <textarea
-            value={JSON.stringify(result)}
-            style={{ width: "100%", height: "100%" }}
-          />
-        </div> */}
       </div>
       <style jsx>{`
         .container {
