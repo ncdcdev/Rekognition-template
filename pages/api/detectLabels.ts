@@ -12,7 +12,6 @@ export default async function handler(
   res: NextApiResponse<DetectLabelsCommandOutput>
 ) {
   const img = req.body.img;
-  console.log({ img });
   if (req.method == "POST") {
     const buffer = Buffer.from(img, "base64");
 
