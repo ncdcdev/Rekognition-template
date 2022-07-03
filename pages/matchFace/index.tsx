@@ -69,23 +69,6 @@ export const App = () => {
       <header className="flex-wrap bg-teal-500 text-white p-6 mb-6">
         <h1>出欠確認</h1>
       </header>
-      <table className="table-auto mb-6">
-        <thead>
-          <tr>
-            <th className="bg-gray-100 px-4 py-2">名前</th>
-            <th className="bg-gray-100 px-4 py-2">出欠</th>
-          </tr>
-        </thead>
-        <tbody>
-          {attendanceList.map((attendance, index) =>
-            <tr key={index}>
-              <td className="border px-4 py-2">{attendance.name}</td>
-              <td className="border px-4 py-2">{attendance.isAttendance ? "○" : "×"}</td>
-            </tr>
-          )}
-
-        </tbody>
-      </table>
 
       <div style={{ display: "flex" }}>
         <div>
@@ -103,6 +86,24 @@ export const App = () => {
           </div>
         </div>
       </div>
+
+      <table className="table-auto mb-6">
+        <thead>
+          <tr>
+            <th className="bg-gray-100 px-4 py-2">名前</th>
+            <th className="bg-gray-100 px-4 py-2">出欠</th>
+          </tr>
+        </thead>
+        <tbody>
+          {attendanceList.map((attendance, index) =>
+            <tr key={index}>
+              <td className="border px-4 py-2">{attendance.name}</td>
+              <td className="border px-4 py-2">{attendance.isAttendance ? "○" : "×"}</td>
+            </tr>
+          )}
+
+        </tbody>
+      </table>
     </div>
   );
 };
