@@ -34,12 +34,12 @@ export const App = () => {
   const { webcamRef, capture, img, result, name, setName } = useApp();
   return (
     <div>
-      <header>
+      <header className="flex-wrap bg-teal-500 text-white p-6 mb-6">
         <h1>メンバ登録</h1>
       </header>
       <div style={{ display: "flex" }}>
         <div>
-          <div className="container">
+          <div className="container mb-6">
             <Webcam
               audio={false}
               width={WIDTH}
@@ -48,12 +48,12 @@ export const App = () => {
               screenshotFormat="image/jpeg"
             />
             <div className="name-container">
-              <div>名前：</div>
-              <input type="text" name="name" value={name} onChange={(e) => { setName(e.target.value) }} />
+              <div className="w-24">名前:</div>
+              <input className="shadow appearance-none border rounded w-full py-2 px-1 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" name="name" value={name} onChange={(e) => { setName(e.target.value) }} />
             </div>
           </div>
           <div className="button-container">
-            <button onClick={capture}>登録</button>
+            <button className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded" onClick={capture}>登録</button>
           </div>
         </div>
       </div>
