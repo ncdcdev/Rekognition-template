@@ -9,7 +9,7 @@ import {
   BoundingBox,
 } from "@aws-sdk/client-rekognition";
 
-const WIDTH = 320 * 1.5;
+const WIDTH = 320;
 const HEIGHT = 240 * 1.5;
 
 const useApp = () => {
@@ -46,6 +46,7 @@ const BoundingBoxes = ({ labels }: BoundingBoxProps) => {
       return [];
     }
     const boxes = labels
+      .filter((f) => f.Name === "Person")
       .flatMap((m) => m.Instances)
       .filter((f): f is Instance => f != undefined)
       .map((m) => m.BoundingBox)
@@ -91,43 +92,46 @@ const BoundingBoxes = ({ labels }: BoundingBoxProps) => {
 };
 
 export const App = () => {
+  const camDiv = useRef<HTMLDivElement>(null);
   const { webcamRef, capture, img, result } = useApp();
-
+  const [start, setStart] = useState<boolean>(false)
+  const personNum = useMemo(()=>{
+    return result?.Labels?.filter(f => f.Name == "Person").flatMap(f => f.Instances).length ?? 0
+  },[result])
   useEffect(() => {
-    setInterval(() => {
-      capture();
+    if(!start){
+      return
+    }
+    
+    const timer = setInterval(()=>{
+        capture()
     }, 1000);
-  }, []);
+
+    return () => {
+        clearInterval(timer)
+    }
+  }, [start,capture]);
 
   return (
     <div>
       <header>
-        <h1>Rekognition</h1>
+        <h1>{personNum}人</h1>
       </header>
-      <div style={{ display: "flex" }}>
-        <div>
-          <div>
+      <button onClick={()=>setStart(true)}>Start</button>
+      <button onClick={()=>setStart(false)}>Stop</button>
+      <div>
+          <div ref={camDiv} style={{ position: "relative" }}>
             <Webcam
               audio={false}
-              width={WIDTH}
-              height={HEIGHT}
+              width={"100%"}
+              height={"100%"}
+              minScreenshotWidth={480}
+              minScreenshotHeight={320}
               ref={webcamRef}
               screenshotFormat="image/jpeg"
             />
+            {start && <BoundingBoxes labels={result?.Labels}/>}
           </div>
-          <div style={{ position: "relative" }}>
-            {img && (
-              <Image src={img} alt="Screenshot" width={WIDTH} height={HEIGHT} />
-            )}
-            <BoundingBoxes labels={result?.Labels} />
-          </div>
-        </div>
-        <div style={{ flex: 1 }}>
-          <textarea
-            value={JSON.stringify(result)}
-            style={{ width: "100%", height: "100%" }}
-          />
-        </div>
       </div>
     </div>
   );
