@@ -5,7 +5,7 @@ import {
   SearchFacesByImageCommandOutput,
 } from "@aws-sdk/client-rekognition";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { AWSClients } from "../../config/awsv3";
+import { AWSClients } from "../../../config/awsv3";
 
 export type Data = { member: string | null }
 
