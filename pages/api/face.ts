@@ -3,11 +3,10 @@ import { CreateCollectionCommand, IndexFacesCommand } from "@aws-sdk/client-reko
 import type { NextApiRequest, NextApiResponse } from "next";
 import {AWSClients} from "../../config/awsv3";
 
-export type Data = AWS.Rekognition.IndexFacesResponse;
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse
 ) {
   const img = req.body.img;
   console.log({ img });
@@ -18,15 +17,6 @@ export default async function handler(
     const collectionId = "faces";
 
     try{
-    // コレクションの作成
-    // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-rekognition/interfaces/createcollectioncommandinput.html
-    const createCollectionParams = {
-      CollectionId: collectionId,
-    };
-    await AWS.rekognitionClient.send(
-      new CreateCollectionCommand(createCollectionParams)
-    );
-
     // コレクションに顔を登録
     // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-rekognition/classes/indexfacescommand.html
     // MaxFaces で検出する顔の数を指定する
