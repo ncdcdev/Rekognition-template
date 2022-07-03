@@ -98,6 +98,23 @@ export const App = () => {
   const personNum = useMemo(()=>{
     return result?.Labels?.filter(f => f.Name == "Person").flatMap(f => f.Instances).length ?? 0
   },[result])
+
+  const [deviceId, setDeviceId] = useState({});
+  const [devices, setDevices] = useState([]);
+
+  const handleDevices = useCallback(
+    mediaDevices =>
+      setDevices(mediaDevices.filter(({ kind }) => kind === "videoinput")),
+    [setDevices]
+  );
+
+  useEffect(
+    () => {
+      navigator.mediaDevices.enumerateDevices().then(handleDevices);
+    },
+    [handleDevices]
+  );
+
   useEffect(() => {
     if(!start){
       return
@@ -129,9 +146,33 @@ export const App = () => {
               minScreenshotHeight={320}
               ref={webcamRef}
               screenshotFormat="image/jpeg"
+              videoConstraints={{ deviceId: deviceId }}
             />
             {start && <BoundingBoxes labels={result?.Labels}/>}
           </div>
+          <div style={{ position: "relative" }}>
+            {img && (
+              <Image src={img} alt="Screenshot" width={WIDTH} height={HEIGHT} />
+            )}
+            <BoundingBoxes labels={result?.Labels} />
+          </div>
+          <div>
+            {devices.map((device, key) => (
+              <button
+                key={device.deviceId}
+                onClick={() => setDeviceId(device.deviceId)}
+              >
+                {device.label || `Device ${key + 1}`}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div style={{ flex: 1 }}>
+          <textarea
+            value={JSON.stringify(result)}
+            style={{ width: "100%", height: "100%" }}
+          />
+        </div>
       </div>
     </div>
   );
