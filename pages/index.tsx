@@ -163,10 +163,10 @@ export const App = () => {
   return (
     <div>
       <header>
-        <h1>{personNum}人</h1>
+        <h1 className="text-3xl font-bold">人数：{personNum}人</h1>
       </header>
-      <button onClick={() => setStart(true)}>Start</button>
-      <button onClick={() => setStart(false)}>Stop</button>
+      <button className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded mx-1 my-1" onClick={() => setStart(true)}>Start</button>
+      <button className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded mx-1 my-1" onClick={() => setStart(false)}>Stop</button>
       <div>
         <div ref={camDiv} style={{ position: "relative" }}>
           <Webcam
@@ -186,6 +186,7 @@ export const App = () => {
             <button
               key={device.deviceId}
               onClick={() => setDeviceId(device.deviceId)}
+              className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded mx-1 my-1"
             >
               {device.label || `Device ${key + 1}`}
             </button>
