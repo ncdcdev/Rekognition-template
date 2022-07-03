@@ -1,31 +1,28 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import AWS from "../../config/aws";
-
-export type Data = AWS.Rekognition.DetectLabelsResponse;
+import { rekognitionClient } from "../../config/awsv3";
+import {
+  DetectLabelsCommand,
+  DetectLabelsCommandInput,
+  DetectLabelsCommandOutput,
+} from "@aws-sdk/client-rekognition";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<DetectLabelsCommandOutput>
 ) {
   const img = req.body.img;
   console.log({ img });
   if (req.method == "POST") {
-    const client = new AWS.Rekognition();
     const buffer = Buffer.from(img, "base64");
 
-    const params: AWS.Rekognition.DetectLabelsRequest = {
+    const params: DetectLabelsCommandInput = {
       Image: {
         Bytes: buffer,
       },
     };
-    client.detectLabels(params, (err, response) => {
-      if (err) {
-        res.status(404);
-      } else {
-        res.status(200).send(response);
-      }
-    });
+    const data = await rekognitionClient.send(new DetectLabelsCommand(params));
+    res.status(200).send(data);
   }
   res.status(404);
 }
