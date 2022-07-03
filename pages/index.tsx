@@ -95,9 +95,9 @@ export const App = () => {
   const camDiv = useRef<HTMLDivElement>(null);
   const { webcamRef, capture, img, result } = useApp();
   const [start, setStart] = useState<boolean>(false)
-  const personNum = useMemo(()=>{
+  const personNum = useMemo(() => {
     return result?.Labels?.filter(f => f.Name == "Person").flatMap(f => f.Instances).length ?? 0
-  },[result])
+  }, [result])
 
   const [deviceId, setDeviceId] = useState({});
   const [devices, setDevices] = useState([]);
@@ -116,62 +116,49 @@ export const App = () => {
   );
 
   useEffect(() => {
-    if(!start){
+    if (!start) {
       return
     }
-    
-    const timer = setInterval(()=>{
-        capture()
+
+    const timer = setInterval(() => {
+      capture()
     }, 1000);
 
     return () => {
-        clearInterval(timer)
+      clearInterval(timer)
     }
-  }, [start,capture]);
+  }, [start, capture]);
 
   return (
     <div>
       <header>
         <h1>{personNum}人</h1>
       </header>
-      <button onClick={()=>setStart(true)}>Start</button>
-      <button onClick={()=>setStart(false)}>Stop</button>
+      <button onClick={() => setStart(true)}>Start</button>
+      <button onClick={() => setStart(false)}>Stop</button>
       <div>
-          <div ref={camDiv} style={{ position: "relative" }}>
-            <Webcam
-              audio={false}
-              width={"100%"}
-              height={"100%"}
-              minScreenshotWidth={480}
-              minScreenshotHeight={320}
-              ref={webcamRef}
-              screenshotFormat="image/jpeg"
-              videoConstraints={{ deviceId: deviceId }}
-            />
-            {start && <BoundingBoxes labels={result?.Labels}/>}
-          </div>
-          <div style={{ position: "relative" }}>
-            {img && (
-              <Image src={img} alt="Screenshot" width={WIDTH} height={HEIGHT} />
-            )}
-            <BoundingBoxes labels={result?.Labels} />
-          </div>
-          <div>
-            {devices.map((device, key) => (
-              <button
-                key={device.deviceId}
-                onClick={() => setDeviceId(device.deviceId)}
-              >
-                {device.label || `Device ${key + 1}`}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div style={{ flex: 1 }}>
-          <textarea
-            value={JSON.stringify(result)}
-            style={{ width: "100%", height: "100%" }}
+        <div ref={camDiv} style={{ position: "relative" }}>
+          <Webcam
+            audio={false}
+            width={"100%"}
+            height={"100%"}
+            minScreenshotWidth={480}
+            minScreenshotHeight={320}
+            ref={webcamRef}
+            screenshotFormat="image/jpeg"
+            videoConstraints={{ deviceId: deviceId }}
           />
+          {start && <BoundingBoxes labels={result?.Labels} />}
+        </div>
+        <div>
+          {devices.map((device, key) => (
+            <button
+              key={device.deviceId}
+              onClick={() => setDeviceId(device.deviceId)}
+            >
+              {device.label || `Device ${key + 1}`}
+            </button>
+          ))}
         </div>
       </div>
     </div>
