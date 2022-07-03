@@ -6,9 +6,7 @@ Rekognitionお試し用コードテンプレート
 `.env.local`をプロジェクトルートに作成  
 Rekognitionを使用できるIAMを作成して、KEYを設定する  
 ```
-AWS_ACCESS_KEY_ID=*****
-AWS_SECRET_ACCESS_KEY=*****
-AWS_REGION=ap-northeast-1
+AWS_PROFILE={$プロファイル名}
 ```
 
 ### 実行
