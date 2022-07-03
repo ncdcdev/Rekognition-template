@@ -7,6 +7,8 @@ import {
   DetectLabelsCommandOutput,
 } from "@aws-sdk/client-rekognition";
 
+export type Data = DetectLabelsCommandOutput
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<DetectLabelsCommandOutput>

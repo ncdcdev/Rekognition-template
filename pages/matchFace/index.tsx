@@ -2,7 +2,7 @@ import { useRef, useState, useCallback } from "react";
 import Webcam from "react-webcam";
 import axios from "axios";
 import Image from "next/image";
-import { Data as DetectLabelsData } from "../api/matchFaces";
+import { Data as SearchFacesByImageData } from "../api/matchFaces";
 
 const WIDTH = 320 * 1.5;
 const HEIGHT = 240 * 1.5;
@@ -10,13 +10,13 @@ const HEIGHT = 240 * 1.5;
 const useApp = () => {
   const webcamRef = useRef<Webcam>(null);
   const [img, setImg] = useState<string | null>(null);
-  const [result, setResult] = useState<DetectLabelsData>();
+  const [result, setResult] = useState<SearchFacesByImageData>();
 
   const capture = useCallback(async () => {
     const screenshot = webcamRef.current?.getScreenshot();
     if (screenshot) {
       const img = screenshot.split(",")[1];
-      const res = await axios.post<DetectLabelsData>("/api/matchFaces", {
+      const res = await axios.post<SearchFacesByImageData>("/api/matchFaces", {
         img: img,
       });
       console.log({ data: res.data });

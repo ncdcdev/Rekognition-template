@@ -1,10 +1,13 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import {
   SearchFacesByImageCommand,
+  SearchFacesByImageCommandInput,
   SearchFacesByImageCommandOutput,
 } from "@aws-sdk/client-rekognition";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { AWSClients } from "../../config/awsv3";
+
+export type Data = SearchFacesByImageCommandOutput
 
 export default async function handler(
   req: NextApiRequest,
@@ -21,11 +24,12 @@ export default async function handler(
     try {
       // 作成したリストから検索する
       // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-rekognition/interfaces/searchfacesbyimagecommandinput.html
-      const searchParams = {
+      const searchParams: SearchFacesByImageCommandInput = {
         CollectionId: collectionId,
         Image: {
           Bytes: buffer,
         },
+        MaxFaces: 3
       };
 
       const data = await AWS.rekognitionClient.send(
