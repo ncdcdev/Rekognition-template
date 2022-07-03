@@ -54,7 +54,8 @@ export const App = () => {
   useEffect(() => {
     (async () => {
       const res = await axios.get<FaceListData>("/api/collections");
-      const initialAttendance = res.data.members.map(member => {
+      const uniqueMembers = Array.from(new Set(res.data.members)); // 重複排除
+      const initialAttendance = uniqueMembers.map(member => {
         return {
           name: member,
           isAttendance: false
