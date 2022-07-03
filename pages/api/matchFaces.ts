@@ -7,11 +7,11 @@ import {
 import type { NextApiRequest, NextApiResponse } from "next";
 import { AWSClients } from "../../config/awsv3";
 
-export type Data = SearchFacesByImageCommandOutput
+export type Data = { member: string | null }
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<SearchFacesByImageCommandOutput>
+  res: NextApiResponse<Data>
 ) {
   const img = req.body.img;
   console.log({ img });
@@ -29,13 +29,15 @@ export default async function handler(
         Image: {
           Bytes: buffer,
         },
-        MaxFaces: 3
+        MaxFaces: 1
       };
 
       const data = await AWS.rekognitionClient.send(
         new SearchFacesByImageCommand(searchParams)
       );
-      res.status(200).send(data);
+
+      const member = (data.FaceMatches?.length != null && data.FaceMatches[0].Face != null) ? data.FaceMatches[0].Face.ExternalImageId ?? "" : null
+      res.status(200).send({ member });
       return;
     } catch (err) {
       console.error(err);
