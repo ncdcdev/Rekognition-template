@@ -66,21 +66,21 @@ export const App = () => {
 
   return (
     <div>
-      <header>
+      <header className="flex-wrap bg-teal-500 text-white p-6 mb-6">
         <h1>出欠確認</h1>
       </header>
-      <table>
+      <table className="table-auto mb-6">
         <thead>
           <tr>
-            <th>名前</th>
-            <th>出欠</th>
+            <th className="bg-gray-100 px-4 py-2">名前</th>
+            <th className="bg-gray-100 px-4 py-2">出欠</th>
           </tr>
         </thead>
         <tbody>
           {attendanceList.map((attendance, index) =>
             <tr key={index}>
-              <td>{attendance.name}</td>
-              <td>{attendance.isAttendance ? "○" : "×"}</td>
+              <td className="border px-4 py-2">{attendance.name}</td>
+              <td className="border px-4 py-2">{attendance.isAttendance ? "○" : "×"}</td>
             </tr>
           )}
 
@@ -89,7 +89,7 @@ export const App = () => {
 
       <div style={{ display: "flex" }}>
         <div>
-          <div>
+          <div className="mb-6">
             <Webcam
               audio={false}
               width={WIDTH}
@@ -98,7 +98,9 @@ export const App = () => {
               screenshotFormat="image/jpeg"
             />
           </div>
-          <button onClick={capture}>出欠確認</button>
+          <div className="flex justify-center">
+            <button className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded" onClick={capture}>出欠確認</button>
+          </div>
         </div>
       </div>
     </div>
