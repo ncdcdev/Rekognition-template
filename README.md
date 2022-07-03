@@ -3,8 +3,7 @@ Rekognitionお試し用コードテンプレート
 
 ## 起動方法
 ### 準備
-`.env.local`をプロジェクトルートに作成  
-Rekognitionを使用できるIAMを作成して、KEYを設定する  
+`.env.local`をプロジェクトルートに作成して以下を記述
 ```
 AWS_PROFILE={$プロファイル名}
 ```
