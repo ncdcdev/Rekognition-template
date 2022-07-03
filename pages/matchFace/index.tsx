@@ -1,8 +1,7 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import Webcam from "react-webcam"
 import axios from "axios";
-import Image from "next/image";
-import { Data as SearchFacesByImageData } from "../api/matchFaces";
+import { SearchFacesByImageData } from "../api/matchFaces/batch";
 import { FaceListData } from "../api/collections";
 
 const WIDTH = 320 * 1.5;
@@ -23,13 +22,13 @@ const useApp = () => {
     const screenshot = webcamRef.current?.getScreenshot();
     if (screenshot) {
       const img = screenshot.split(",")[1];
-      const res = await axios.post<SearchFacesByImageData>("/api/matchFaces", {
+      const res = await axios.post<SearchFacesByImageData>("/api/matchFaces/batch", {
         img: img,
       });
-      if (res.data.member != null) {
+      if (res.data.members.length != 0) {
         const updatedAttendanceList = attendanceList.map(attendance => {
           // 照合したメンバの出欠状態を変更する
-          if (attendance.name === res.data.member) {
+          if (res.data.members.includes(attendance.name)) {
             return {
               ...attendance,
               isAttendance: true
