@@ -2,7 +2,7 @@ import { useRef, useState, useCallback } from "react";
 import Webcam from "react-webcam";
 import axios from "axios";
 import Image from "next/image";
-import { Data as DetectLabelsData } from "./api/detectLabels";
+import { DetectLabelsCommandOutput } from "@aws-sdk/client-rekognition";
 
 const WIDTH = 320 * 1.5;
 const HEIGHT = 240 * 1.5;
@@ -10,15 +10,18 @@ const HEIGHT = 240 * 1.5;
 const useApp = () => {
   const webcamRef = useRef<Webcam>(null);
   const [img, setImg] = useState<string | null>(null);
-  const [result, setResult] = useState<DetectLabelsData>();
+  const [result, setResult] = useState<DetectLabelsCommandOutput>();
 
   const capture = useCallback(async () => {
     const screenshot = webcamRef.current?.getScreenshot();
     if (screenshot) {
       const img = screenshot.split(",")[1];
-      const res = await axios.post<DetectLabelsData>("/api/detectLabels", {
-        img: img,
-      });
+      const res = await axios.post<DetectLabelsCommandOutput>(
+        "/api/detectLabels",
+        {
+          img: img,
+        }
+      );
       console.log({ data: res.data });
       setResult(res.data);
       setImg(screenshot);
@@ -27,6 +30,8 @@ const useApp = () => {
 
   return { webcamRef, capture, img, result };
 };
+
+const BoundingBox = () => {};
 
 export const App = () => {
   const { webcamRef, capture, img, result } = useApp();

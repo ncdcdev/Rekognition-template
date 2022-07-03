@@ -9,3 +9,9 @@ export class AWSClients {
     });
   }
 }
+
+const awsClient = new AWSClients();
+
+const rekognitionClient = awsClient.rekognitionClient;
+
+export { rekognitionClient };
