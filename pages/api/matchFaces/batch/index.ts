@@ -11,17 +11,17 @@ import {
 import type { NextApiRequest, NextApiResponse } from "next";
 import { rekognitionClient } from "../../../../config/awsv3";
 
-export type SearchFacesByImageData = { members: string[] }
+export type SearchFacesByImageData = { members: string[] };
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<SearchFacesByImageData>
+  res: NextApiResponse<SearchFacesByImageData | string>
 ) {
   if (req.method == "POST") {
     const buffer = Buffer.from(req.body.img, "base64");
-    const img = sharp(buffer)
+    const img = sharp(buffer);
     try {
-        // rekognitionでPersonのBoundingBox値取得
+      // rekognitionでPersonのBoundingBox値取得
       const personBoxes = await getBoundingBox(img);
 
       // BoundingBoxに基づいて、画像を切り出す
@@ -34,12 +34,12 @@ export default async function handler(
 
       return;
     } catch (err) {
-      console.error(err);
-      res.status(500);
+      console.error({ err });
+      res.status(500).send("error");
       return;
     }
   }
-  res.status(404);
+  res.status(404).send("error");
 }
 
 // rekognitionでPersonのBoundingBox値取得

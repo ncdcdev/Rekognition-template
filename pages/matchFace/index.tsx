@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback, useEffect } from "react";
-import Webcam from "react-webcam"
+import Webcam from "react-webcam";
 import axios from "axios";
 import { SearchFacesByImageData } from "../api/matchFaces/batch";
 import { FaceListData } from "../api/collections";
@@ -8,39 +8,51 @@ const WIDTH = 320 * 1.5;
 const HEIGHT = 240 * 1.5;
 
 type Attendance = {
-  name: string,
-  isAttendance: boolean
-}[]
+  name: string;
+  isAttendance: boolean;
+}[];
 
 const useApp = () => {
   const webcamRef = useRef<Webcam>(null);
   const [img, setImg] = useState<string | null>(null);
   const [result, setResult] = useState<SearchFacesByImageData>();
-  const [attendanceList, setAttendanceList] = useState<Attendance>([])
+  const [attendanceList, setAttendanceList] = useState<Attendance>([]);
 
   const capture = useCallback(async () => {
     const screenshot = webcamRef.current?.getScreenshot();
     if (screenshot) {
       const img = screenshot.split(",")[1];
-      const res = await axios.post<SearchFacesByImageData>("/api/matchFaces/batch", {
-        img: img,
-      });
-      if (res.data.members.length != 0) {
-        const updatedAttendanceList = attendanceList.map(attendance => {
-          // 照合したメンバの出欠状態を変更する
-          if (res.data.members.includes(attendance.name)) {
-            return {
-              ...attendance,
-              isAttendance: true
-            }
+      try {
+        const res = await axios.post<SearchFacesByImageData>(
+          "/api/matchFaces/batch",
+          {
+            img: img,
           }
-          return attendance
-        })
-        setAttendanceList(updatedAttendanceList)
-      }
+        );
+        console.log({ data: res.data, status: res.status });
+        if (res.status !== 200) {
+          console.error(res.data);
+          return;
+        }
+        if (res.data.members.length != 0) {
+          const updatedAttendanceList = attendanceList.map((attendance) => {
+            // 照合したメンバの出欠状態を変更する
+            if (res.data.members.includes(attendance.name)) {
+              return {
+                ...attendance,
+                isAttendance: true,
+              };
+            }
+            return attendance;
+          });
+          setAttendanceList(updatedAttendanceList);
+        }
 
-      setResult(res.data);
-      setImg(screenshot);
+        setResult(res.data);
+        setImg(screenshot);
+      } catch (e) {
+        console.error(e);
+      }
     }
   }, [webcamRef, attendanceList]);
 
@@ -48,21 +60,24 @@ const useApp = () => {
 };
 
 export const App = () => {
-  const { webcamRef, capture, img, result, attendanceList, setAttendanceList } = useApp();
+  const { webcamRef, capture, img, result, attendanceList, setAttendanceList } =
+    useApp();
+
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
       const res = await axios.get<FaceListData>("/api/collections");
       const uniqueMembers = Array.from(new Set(res.data.members)); // 重複排除
-      const initialAttendance = uniqueMembers.map(member => {
+      const initialAttendance = uniqueMembers.map((member) => {
         return {
           name: member,
-          isAttendance: false
-        }
-      })
-      setAttendanceList(initialAttendance)
-    })()
-  }, [])
+          isAttendance: false,
+        };
+      });
+      setAttendanceList(initialAttendance);
+    })();
+  }, []);
 
   return (
     <div>
@@ -70,8 +85,8 @@ export const App = () => {
         <h1>出欠確認</h1>
       </header>
 
-      <div style={{ display: "flex" }}>
-        <div>
+      <div className="flex">
+        <div className={`w-[${WIDTH}px]`}>
           <div className="mb-6">
             <Webcam
               audio={false}
@@ -79,31 +94,47 @@ export const App = () => {
               height={HEIGHT}
               ref={webcamRef}
               screenshotFormat="image/jpeg"
+              minScreenshotWidth={640 * 2}
+              minScreenshotHeight={480 * 2}
             />
           </div>
           <div className="flex justify-center">
-            <button className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded" onClick={capture}>出欠確認</button>
+            <button
+              className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded"
+              onClick={async () => {
+                setLoading(true);
+                await capture();
+                setLoading(false);
+              }}
+            >
+              {loading ? "出欠確認中" : "出席確認"}
+            </button>
+          </div>
+        </div>
+        <div className={`flex-1`}>
+          <div className="flex flex-wrap">
+            {attendanceList.map((attendance, index) => {
+              return (
+                <div
+                  key={index}
+                  className={`ml-4 mb-4 w-[200px] border-2 ${
+                    attendance.isAttendance
+                      ? "border-sky-500"
+                      : "border-red-500"
+                  } rounded-lg`}
+                >
+                  <div className="flex justify-center">
+                    <div>{attendance.name.toUpperCase()}</div>
+                  </div>
+                  <div className="flex justify-center">
+                    <div>{attendance.isAttendance ? "○" : "×"}</div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
-
-      <table className="table-auto mb-6">
-        <thead>
-          <tr>
-            <th className="bg-gray-100 px-4 py-2">名前</th>
-            <th className="bg-gray-100 px-4 py-2">出欠</th>
-          </tr>
-        </thead>
-        <tbody>
-          {attendanceList.map((attendance, index) =>
-            <tr key={index}>
-              <td className="border px-4 py-2">{attendance.name}</td>
-              <td className="border px-4 py-2">{attendance.isAttendance ? "○" : "×"}</td>
-            </tr>
-          )}
-
-        </tbody>
-      </table>
     </div>
   );
 };
