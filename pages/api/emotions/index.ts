@@ -1,8 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import {
-  SearchFacesByImageCommand,
-  SearchFacesByImageCommandInput,
-  SearchFacesByImageCommandOutput,
   DetectFacesCommandInput,
   DetectFacesCommand
 } from "@aws-sdk/client-rekognition";
@@ -17,7 +14,6 @@ export default async function handler(
 ) {
   const AWS = new AWSClients();
   const img = req.body.img;
-  const collectionId = "faces";
 
   if (req.method == "POST") {
     // 画像を取得
@@ -37,15 +33,20 @@ export default async function handler(
         new DetectFacesCommand(faceParams)
       );
 
-      console.log(data)
-
+      let returnObj: EmotionData
       // レスポンスから一番値が大きい感情を取得してクライアントにレスポンスする
+      if( data.FaceDetails == null ){
+        returnObj = {emotion:""}
+      }else{
+        const maxEmotion = data.FaceDetails[0].Emotions?.reduce((a,b)=>{
+          if(Number(a.Confidence) > Number(b.Confidence)) return a
+          return b
+        },{Confidence:0})
+        returnObj = { emotion: maxEmotion!=null ? String(maxEmotion.Type) : null}
 
-
-
-      // const member = (data.FaceMatches?.length != null && data.FaceMatches[0].Face != null) ? data.FaceMatches[0].Face.ExternalImageId ?? "" : null
-      res.status(200).send({ emotion: "SAD" });
-      return;
+        res.status(200).send(returnObj);
+        return;
+      }
     } catch (err) {
       console.error(err);
       res.status(500);
