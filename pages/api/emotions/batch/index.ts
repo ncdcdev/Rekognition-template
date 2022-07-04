@@ -7,7 +7,7 @@ import {
 import type { NextApiRequest, NextApiResponse } from "next";
 import { AWSClients } from "../../../../config/awsv3";
 
-export type EmotionDataArray = { emotion: string | null,boundingBox:BoundingBox|null }[]
+export type EmotionDataArray = { emotion: string | null, boundingBox:BoundingBox|null }[]
 
 export default async function handler(
   req: NextApiRequest,
