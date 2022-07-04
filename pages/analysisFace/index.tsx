@@ -7,11 +7,16 @@ import dynamic from 'next/dynamic';
 const WIDTH = 320 * 1.5;
 const HEIGHT = 240 * 1.5;
 
+type Emotion = {
+  label: string,
+  emojiCode: string
+}
+
 const useApp = () => {
   const webcamRef = useRef<Webcam>(null);
   const [img, setImg] = useState<string | null>(null);
   const [result, setResult] = useState<EmotionData>({ emotion: null });
-  const [emojiCode, setEmojiCode] = useState("")
+  const [emotion, setEmotion] = useState<Emotion>()
 
   const capture = useCallback(async () => {
     const screenshot = webcamRef.current?.getScreenshot();
@@ -26,31 +31,31 @@ const useApp = () => {
       if (res.data.emotion != null) {
         switch (res.data.emotion) {
           case "ANGRY":
-            setEmojiCode("&#x1F621;")
+            setEmotion({ label: "ANGRY", emojiCode: "&#x1F621;" })
             break;
           case "CALM":
-            setEmojiCode("&#x1F610;")
+            setEmotion({ label: "CALM", emojiCode: "&#x1F610;" })
             break;
           case "CONFUSED":
-            setEmojiCode("&#x1F635;&zwj;&#x1F4AB;")
+            setEmotion({ label: "CONFUSED", emojiCode: "&#x1F635;&zwj;&#x1F4AB;" })
             break;
           case "DISGUSTED":
-            setEmojiCode("&#x1F92E;")
+            setEmotion({ label: "DISGUSTED", emojiCode: "&#x1F92E;" })
             break;
           case "FEAR":
-            setEmojiCode("&#x1F631;")
+            setEmotion({ label: "FEAR", emojiCode: "&#x1F631;" })
             break;
           case "HAPPY":
-            setEmojiCode("&#x1F970;")
+            setEmotion({ label: "HAPPY", emojiCode: "&#x1F970;" })
             break;
           case "SAD":
-            setEmojiCode("&#x1F979;")
+            setEmotion({ label: "SAD", emojiCode: "&#x1F979;" })
             break;
           case "SURPRISED":
-            setEmojiCode("&#x1F633;")
+            setEmotion({ label: "SURPRISED", emojiCode: "&#x1F633;" })
             break;
           default:
-            setEmojiCode("&#x1F621;")
+            setEmotion({ label: "CALM", emojiCode: "&#x1F610;" })
         }
       }
 
@@ -59,11 +64,11 @@ const useApp = () => {
     }
   }, [webcamRef]);
 
-  return { webcamRef, capture, img, result, emojiCode };
+  return { webcamRef, capture, img, result, emotion };
 };
 
 export const App = () => {
-  const { webcamRef, capture, img, result, emojiCode } = useApp();
+  const { webcamRef, capture, img, result, emotion } = useApp();
   const [start, setStart] = useState<boolean>(false);
 
 
@@ -104,7 +109,8 @@ export const App = () => {
           </div>
         </div>
         <div>
-          <div className="text-300px" dangerouslySetInnerHTML={{ __html: emojiCode }}></div>
+          <div>{emotion?.label ?? ""}</div>
+          <div className="text-300px" dangerouslySetInnerHTML={{ __html: emotion?.emojiCode ?? "" }}></div>
         </div>
       </div>
     </div>
