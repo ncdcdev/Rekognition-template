@@ -22,28 +22,37 @@ const useApp = () => {
     const screenshot = webcamRef.current?.getScreenshot();
     if (screenshot) {
       const img = screenshot.split(",")[1];
-      const res = await axios.post<SearchFacesByImageData>(
-        "/api/matchFaces/batch",
-        {
-          img: img,
-        }
-      );
-      if (res.data.members.length != 0) {
-        const updatedAttendanceList = attendanceList.map((attendance) => {
-          // 照合したメンバの出欠状態を変更する
-          if (res.data.members.includes(attendance.name)) {
-            return {
-              ...attendance,
-              isAttendance: true,
-            };
+      try {
+        const res = await axios.post<SearchFacesByImageData>(
+          "/api/matchFaces/batch",
+          {
+            img: img,
           }
-          return attendance;
-        });
-        setAttendanceList(updatedAttendanceList);
-      }
+        );
+        console.log({ data: res.data, status: res.status });
+        if (res.status !== 200) {
+          console.error(res.data);
+          return;
+        }
+        if (res.data.members.length != 0) {
+          const updatedAttendanceList = attendanceList.map((attendance) => {
+            // 照合したメンバの出欠状態を変更する
+            if (res.data.members.includes(attendance.name)) {
+              return {
+                ...attendance,
+                isAttendance: true,
+              };
+            }
+            return attendance;
+          });
+          setAttendanceList(updatedAttendanceList);
+        }
 
-      setResult(res.data);
-      setImg(screenshot);
+        setResult(res.data);
+        setImg(screenshot);
+      } catch (e) {
+        console.error(e);
+      }
     }
   }, [webcamRef, attendanceList]);
 
@@ -85,6 +94,8 @@ export const App = () => {
               height={HEIGHT}
               ref={webcamRef}
               screenshotFormat="image/jpeg"
+              minScreenshotWidth={640 * 2}
+              minScreenshotHeight={480 * 2}
             />
           </div>
           <div className="flex justify-center">
