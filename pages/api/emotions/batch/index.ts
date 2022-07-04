@@ -40,14 +40,14 @@ export default async function handler(
       // レスポンスの顔ごとに一番値が大きい感情を取得してクライアントにレスポンスする
       if( data.FaceDetails != null ){
         data.FaceDetails.map(face=> {
-          face.Emotions?.reduce((a,b)=>{
+          const emotion = face.Emotions?.reduce((a,b,)=>{
             if(Number(a.Confidence) > Number(b.Confidence)) {
-              returnObj.push({emotion:String(a.Type),boundingBox:face.BoundingBox??null})
               return a
             }
-            returnObj.push({emotion:String(b.Type),boundingBox:face.BoundingBox??null})
             return b
-          },{Confidence:0})  
+          },{Confidence:0}) 
+          if(emotion==null) return
+          returnObj.push({emotion:String(emotion.Type),boundingBox:face.BoundingBox??null})
         })
       }
       res.status(200).send(returnObj);
