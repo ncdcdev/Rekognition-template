@@ -1,5 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { CreateCollectionCommand, IndexFacesCommand, IndexFacesCommandInput, ListFacesCommandInput, ListFacesCommand } from "@aws-sdk/client-rekognition";
+import { IndexFacesCommand, IndexFacesCommandInput, ListFacesCommandInput, ListFacesCommand } from "@aws-sdk/client-rekognition";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { AWSClients } from "../../config/awsv3";
 
@@ -15,9 +15,6 @@ export default async function handler(
 
   if (req.method == "GET") {
     try {
-      // コレクションに顔を登録
-      // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-rekognition/classes/indexfacescommand.html
-      // MaxFaces で検出する顔の数を指定する
       const listFacesParams: ListFacesCommandInput = {
         CollectionId: collectionId,
       };
