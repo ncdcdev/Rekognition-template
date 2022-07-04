@@ -21,8 +21,9 @@ export default async function handler(
 
     try {
       // DetectFaces APIに画像を渡す
+      // Attributesは"ALL"を指定しないとEmotionが取得できない
       const faceParams: DetectFacesCommandInput = {
-        Attributes: ["All"],
+        Attributes: ["ALL"],
         Image: {
           Bytes: buffer
         }
@@ -36,7 +37,7 @@ export default async function handler(
       let returnObj: EmotionData
       // レスポンスから一番値が大きい感情を取得してクライアントにレスポンスする
       if( data.FaceDetails == null ){
-        returnObj = {emotion:""}
+        returnObj = {emotion:null}
       }else{
         const maxEmotion = data.FaceDetails[0].Emotions?.reduce((a,b)=>{
           if(Number(a.Confidence) > Number(b.Confidence)) return a
