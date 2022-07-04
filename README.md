@@ -14,3 +14,10 @@ $ yarn
 $ yarn dev
 ```
 
+### 使用したAPI
+- 顔検出
+https://docs.aws.amazon.com/ja_jp/rekognition/latest/dg/API_DetectFaces.html
+
+- ラベル検出
+https://docs.aws.amazon.com/ja_jp/rekognition/latest/dg/labels-detect-labels-image.html
+

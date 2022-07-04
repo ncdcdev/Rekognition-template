@@ -96,7 +96,7 @@ const useApp = () => {
             emojiCode:boundingBox.emojiCode,
             width: `${boundingBox.width * 100}%`,
             height: `${boundingBox.height * 100}%`,
-            top: `${(boundingBox.top-boundingBox.height/2) * 80}%`,
+            top: `${(boundingBox.top-boundingBox.height/1.5) * 100}%`,
             left: `${(boundingBox.left-boundingBox.width/2) * 100}%`,
             emojiSize: parentHeight
           };
@@ -112,7 +112,7 @@ const useApp = () => {
               style={{
                 ...m,
                 position: "absolute",
-                fontSize: m.emojiSize + "px"
+                fontSize: m.emojiSize  + "px"
               }}
               dangerouslySetInnerHTML={{ __html: m.emojiCode ?? "" }}
             ></div>
