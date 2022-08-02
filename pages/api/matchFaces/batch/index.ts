@@ -35,11 +35,10 @@ export default async function handler(
       return;
     } catch (err) {
       console.error({ err });
-      res.status(500).send("error");
+      res.status(500);
       return;
     }
   }
-  res.status(404).send("error");
 }
 
 // rekognitionでPersonのBoundingBox値取得

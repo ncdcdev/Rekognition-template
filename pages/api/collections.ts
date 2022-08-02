@@ -53,7 +53,6 @@ export default async function handler(
       return
     }
   }
-  res.status(404);
 
   if (req.method == "DELETE") {
     const AWS = new AWSClients();
@@ -77,5 +76,4 @@ export default async function handler(
       return
     }
   }
-  res.status(404);
 }
