@@ -15,15 +15,24 @@ export default async function handler(
 ) {
   const img = req.body.img;
   if (req.method == "POST") {
-    const buffer = Buffer.from(img, "base64");
+    try{
 
-    const params: DetectLabelsCommandInput = {
-      Image: {
-        Bytes: buffer,
-      },
-    };
-    const data = await rekognitionClient.send(new DetectLabelsCommand(params));
-    res.status(200).send(data);
+      const buffer = Buffer.from(img, "base64");
+
+      const params: DetectLabelsCommandInput = {
+        Image: {
+          Bytes: buffer,
+        },
+      };
+    
+      const data = await rekognitionClient.send(new DetectLabelsCommand(params));
+      res.status(200).send(data);
+      return
+
+    }catch(err){
+      console.error(err);
+      res.status(500);
+      return;
+    }
   }
-  res.status(404);
 }

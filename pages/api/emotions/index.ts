@@ -53,6 +53,5 @@ export default async function handler(
       res.status(500);
       return;
     }
-    res.status(404);
   }
 }

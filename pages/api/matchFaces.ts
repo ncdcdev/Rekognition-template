@@ -2,7 +2,6 @@
 import {
   SearchFacesByImageCommand,
   SearchFacesByImageCommandInput,
-  SearchFacesByImageCommandOutput,
 } from "@aws-sdk/client-rekognition";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { AWSClients } from "../../config/awsv3";
@@ -45,5 +44,4 @@ export default async function handler(
       return;
     }
   }
-  res.status(404);
 }
