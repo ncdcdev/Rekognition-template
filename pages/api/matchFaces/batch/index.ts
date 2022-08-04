@@ -3,13 +3,12 @@ import sharp from "sharp";
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import {
   BoundingBox,
-  DetectLabelsCommand,
-  DetectLabelsCommandInput,
   Instance,
   SearchFacesByImageCommand,
 } from "@aws-sdk/client-rekognition";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { rekognitionClient } from "../../../../config/awsv3";
+import { RekognitionRepository } from "../../../../lib/api/repositories/RekognitionRepository";
 
 export type SearchFacesByImageData = { members: string[] };
 
@@ -43,12 +42,8 @@ export default async function handler(
 
 // rekognitionでPersonのBoundingBox値取得
 const getBoundingBox = async (img: sharp.Sharp) => {
-  const params: DetectLabelsCommandInput = {
-    Image: {
-      Bytes: await img.toBuffer(),
-    },
-  };
-  const data = await rekognitionClient.send(new DetectLabelsCommand(params));
+  const repository = new RekognitionRepository();
+  const data = await repository.getDetectLabels(await img.toBuffer())
 
   const boxes = data.Labels?.filter((f) => f.Name === "Person")
     .flatMap((m) => m.Instances)
