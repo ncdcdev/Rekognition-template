@@ -1,199 +1,115 @@
-import { useRef, useState, useCallback, useMemo, useEffect } from "react";
-import Webcam from "react-webcam";
-import axios from "axios";
-import Image from "next/image";
-import {
-  DetectLabelsCommandOutput,
-  Label,
-  Instance,
-  BoundingBox,
-} from "@aws-sdk/client-rekognition";
+import Link from 'next/link'
 
-const WIDTH = 320;
-const HEIGHT = 240 * 1.5;
-
-const useApp = () => {
-  const webcamRef = useRef<Webcam>(null);
-  const [img, setImg] = useState<string | null>(null);
-  const [result, setResult] = useState<DetectLabelsCommandOutput>();
-
-  const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
-
-  const handleDevices = useCallback(async () => {
-    let unmounted = false;
-
-    const f = async () => {
-      try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        if (!unmounted) {
-          setDevices(devices.filter((f) => f.kind === "videoinput"));
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    };
-
-    f();
-
-    return () => {
-      unmounted = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    let unmounted = false;
-    const f = async () => {
-      try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        if (!unmounted) {
-          handleDevices();
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    f();
-    return () => {
-      unmounted = true;
-    };
-  }, [handleDevices]);
-
-  const capture = useCallback(async () => {
-    const screenshot = webcamRef.current?.getScreenshot();
-    if (screenshot) {
-      const img = screenshot.split(",")[1];
-      const res = await axios.post<DetectLabelsCommandOutput>(
-        "/api/detectLabels",
-        {
-          img: img,
-        }
-      );
-      console.log({ data: res.data });
-      setResult(res.data);
-      setImg(screenshot);
+export const App = () => {
+  const contents = [
+    {
+      linkPass: "/label",
+      title: "ラベル検出",
+      detail: "説明",
+      image: null
+    },
+    {
+      linkPass: "/indexFace",
+      title : "インデックス登録",
+      detail: "説明",
+      image: null
+    },
+    {
+      linkPass: "/matchFace",
+      title : "照合",
+      detail: "説明",
+      image: null
+    },
+    {
+      linkPass: "/collection",
+      title : "コレクション登録/削除",
+      detail: "説明",
+      image: null
     }
-  }, [webcamRef]);
-
-  return { webcamRef, capture, img, result, devices };
-};
-
-type BoundingBoxProps = {
-  labels?: Label[];
-};
-
-const BoundingBoxes = ({ labels }: BoundingBoxProps) => {
-  const boxes = useMemo(() => {
-    if (!labels) {
-      return [];
-    }
-    const boxes = labels
-      .filter((f) => f.Name === "Person")
-      .flatMap((m) => m.Instances)
-      .filter((f): f is Instance => f != undefined)
-      .map((m) => m.BoundingBox)
-      .filter((f): f is BoundingBox => f != undefined);
-
-    return boxes
-      .map((m) => {
-        return {
-          width: m.Width ?? 0,
-          height: m.Height ?? 0,
-          top: m.Top ?? 0,
-          left: m.Left ?? 0,
-        };
-      })
-      .map((m) => {
-        return {
-          width: `${m.width * 100}%`,
-          height: `${m.height * 100}%`,
-          top: `${m.top * 100}%`,
-          left: `${m.left * 100}%`,
-        };
-      });
-  }, [labels]);
+  ];
 
   return (
     <>
-      {boxes.map((m, i) => {
-        return (
-          <div
-            key={i}
-            style={{
-              ...m,
-              position: "absolute",
-              borderStyle: "solid",
-              borderWidth: "4px 4px",
-              borderColor: "red",
-            }}
-          ></div>
-        );
-      })}
-    </>
-  );
-};
-
-export const App = () => {
-  const camDiv = useRef<HTMLDivElement>(null);
-  const { webcamRef, capture, img, result, devices } = useApp();
-  const [start, setStart] = useState<boolean>(false);
-  const [deviceId, setDeviceId] = useState<string>();
-
-  const personNum = useMemo(() => {
-    return (
-      result?.Labels?.filter((f) => f.Name == "Person").flatMap(
-        (f) => f.Instances
-      ).length ?? 0
-    );
-  }, [result]);
-
-  useEffect(() => {
-    if (!start) {
-      return;
-    }
-
-    const timer = setInterval(() => {
-      capture();
-    }, 1000);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, [start, capture]);
-
-  return (
-    <div>
       <header>
-        <h1 className="text-3xl font-bold">人数：{personNum}人</h1>
+        <h1>Rekognition</h1>
       </header>
-      <button className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded mx-1 my-1" onClick={() => setStart(true)}>Start</button>
-      <button className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded mx-1 my-1" onClick={() => setStart(false)}>Stop</button>
-      <div>
-        <div ref={camDiv} style={{ position: "relative" }}>
-          <Webcam
-            audio={false}
-            width={"100%"}
-            height={"100%"}
-            minScreenshotWidth={480}
-            minScreenshotHeight={320}
-            ref={webcamRef}
-            screenshotFormat="image/jpeg"
-            videoConstraints={{ deviceId: deviceId }}
-          />
-          {start && <BoundingBoxes labels={result?.Labels} />}
-        </div>
-        <div>
-          {devices.map((device, key) => (
-            <button
-              key={device.deviceId}
-              onClick={() => setDeviceId(device.deviceId)}
-              className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded mx-1 my-1"
-            >
-              {device.label || `Device ${key + 1}`}
-            </button>
-          ))}
-        </div>
+
+      <div className="container">
+        {contents.map(content => {
+          return (
+            <div key={content.title}>
+              <Link href={content.linkPass}>
+                <div className="card card-skin">
+                  <img className="card__imgframe" src={content.image ?? "/image/No-Image.png"} alt="" />
+                  <div className="card__textbox">
+                    <div className="card__titletext">
+                      {content.title}
+                    </div>
+                    <div className="card__overviewtext">
+                      {content.detail}
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          );
+        })}
       </div>
-    </div>
-  );
-};
-export default App;
+      <style jsx>{`
+      header {
+        margin 0;
+        width: 100%;
+        background-color: #14b8a6;
+        margin-bottom: 100px;
+      }
+
+      h1 {
+        font-size: 30px;
+        color: #fff;
+        text-align: center;
+        padding: 10px;
+      }
+
+      .container {
+        display: flex;
+        margin: 0 auto;
+        justify-content: space-around;
+      }
+
+      .card{
+        width: 320px;
+        height: auto;
+      }
+      .card__imgframe{
+        max-width: 100%;
+        height: auto;
+      }
+      .card__textbox{
+        width: 100%;
+        height: auto;
+        padding: 20px 18px;
+        background: #ffffff;
+        box-sizing: border-box;
+      }
+      .card__textbox > * + *{
+        margin-top: 10px;
+      }
+      .card__titletext{
+        font-size: 20px;
+        font-weight: bold;
+        line-height: 125%;
+      }
+      .card__overviewtext{
+        font-size: 12px;
+        line-height: 150%;
+      }
+      .card-skin{
+        cursor: pointer;
+        box-shadow: 2px 2px 6px rgba(0,0,0,.4);
+      }
+    `}</style>
+  </>
+  )
+}
+
+export default App
