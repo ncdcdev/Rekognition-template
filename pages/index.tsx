@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-export const App = () => {
+const App = () => {
   const contents = [
     {
       linkPass: "/label",
