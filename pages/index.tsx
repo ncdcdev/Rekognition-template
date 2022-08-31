@@ -1,31 +1,31 @@
-import Link from 'next/link'
+import Link from "next/link";
 
 const App = () => {
   const contents = [
     {
       linkPass: "/label",
-      title: "ラベル検出",
+      title: "人数検出",
       detail: "説明",
-      image: null
+      image: null,
     },
     {
       linkPass: "/indexFace",
-      title : "インデックス登録",
+      title: "メンバ登録",
       detail: "説明",
-      image: null
+      image: null,
     },
     {
       linkPass: "/matchFace",
-      title : "照合",
+      title: "出欠確認",
       detail: "説明",
-      image: null
+      image: null,
     },
     {
-      linkPass: "/collection",
-      title : "コレクション登録/削除",
+      linkPass: "/analysisFace",
+      title: "表情分析",
       detail: "説明",
-      image: null
-    }
+      image: null,
+    },
   ];
 
   return (
@@ -35,19 +35,19 @@ const App = () => {
       </header>
 
       <div className="container">
-        {contents.map(content => {
+        {contents.map((content) => {
           return (
             <div key={content.title}>
               <Link href={content.linkPass}>
                 <div className="card card-skin">
-                  <img className="card__imgframe" src={content.image ?? "/image/No-Image.png"} alt="" />
+                  <img
+                    className="card__imgframe"
+                    src={content.image ?? "/image/No-Image.png"}
+                    alt=""
+                  />
                   <div className="card__textbox">
-                    <div className="card__titletext">
-                      {content.title}
-                    </div>
-                    <div className="card__overviewtext">
-                      {content.detail}
-                    </div>
+                    <div className="card__titletext">{content.title}</div>
+                    <div className="card__overviewtext">{content.detail}</div>
                   </div>
                 </div>
               </Link>
@@ -108,8 +108,8 @@ const App = () => {
         box-shadow: 2px 2px 6px rgba(0,0,0,.4);
       }
     `}</style>
-  </>
-  )
-}
+    </>
+  );
+};
 
-export default App
+export default App;
