@@ -1,7 +1,6 @@
 import { useRef, useState, useCallback } from "react";
 import Webcam from "react-webcam";
 import axios from "axios";
-import Image from "next/image";
 import { Data as DetectLabelsData } from "../api/detectLabels";
 
 const WIDTH = 320 * 1.5;
@@ -18,8 +17,8 @@ const useApp = () => {
     if (screenshot) {
       const img = screenshot.split(",")[1];
       const res = await axios.post<DetectLabelsData>("/api/face", {
-        img: img,
-        name: name
+        img,
+        name
       });
       console.log({ data: res.data });
       setResult(res.data);
