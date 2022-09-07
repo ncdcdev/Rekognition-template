@@ -2,6 +2,7 @@ import { useRef, useState, useCallback, useMemo, useEffect } from "react";
 import Webcam from "react-webcam";
 import axios from "axios";
 import Image from "next/image";
+import Link from 'next/link';
 import {
   DetectLabelsCommandOutput,
   Label,
@@ -162,11 +163,17 @@ export const App = () => {
 
   return (
     <div>
+      <header className="flex bg-teal-500 text-white p-6 mb-6">
+        <h1>人数検出</h1>
+        <div className="ml-auto mr-5">
+          <Link href="/">ホーム画面に戻る</Link>
+        </div>
+      </header>
       <header>
         <h1 className="text-3xl font-bold">人数：{personNum}人</h1>
       </header>
-      <button className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded mx-1 my-1" onClick={() => setStart(true)}>Start</button>
-      <button className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded mx-1 my-1" onClick={() => setStart(false)}>Stop</button>
+          <button className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded mx-1 my-1" onClick={() => setStart(true)}>Start</button>
+          <button className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded mx-1 my-1" onClick={() => setStart(false)}>Stop</button>
       <div>
         <div ref={camDiv} style={{ position: "relative" }}>
           <Webcam

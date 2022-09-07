@@ -3,6 +3,7 @@ import Webcam from "react-webcam";
 import axios from "axios";
 import { SearchFacesByImageData } from "../api/matchFaces/batch";
 import { FaceListData } from "../api/collections";
+import Link from "next/link";
 
 const WIDTH = 320 * 1.5;
 const HEIGHT = 240 * 1.5;
@@ -81,10 +82,12 @@ export const App = () => {
 
   return (
     <div>
-      <header className="flex-wrap bg-teal-500 text-white p-6 mb-6">
+      <header className="flex bg-teal-500 text-white p-6 mb-6">
         <h1>出欠確認</h1>
+        <div className="ml-auto mr-5">
+          <Link href="/">ホーム画面に戻る</Link>
+        </div>
       </header>
-
       <div className="flex">
         <div className={`w-[${WIDTH}px]`}>
           <div className="mb-6">

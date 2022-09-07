@@ -1,37 +1,38 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const App = () => {
   const contents = [
     {
       linkPass: "/label",
       title: "人数検出",
-      detail: "説明",
-      image: null,
+      detail: "カメラに写っている人を検知して、その人数を表示するサンプルアプリケーションです。人を検知すると画像内で赤枠で囲んで表示します。",
+      image: "/image/detect_person.png",
     },
     {
       linkPass: "/indexFace",
-      title: "メンバ登録",
-      detail: "説明",
-      image: null,
+      title: "メンバー登録",
+      detail: "メンバーの顔の画像を登録するンプルアプリケーションです。顔と名前を登録すると出欠確認が出来るようになります。",
+      image: "/image/register_face.png",
     },
     {
       linkPass: "/matchFace",
       title: "出欠確認",
-      detail: "説明",
-      image: null,
+      detail: "メンバー登録アプリケーションで登録した顔の画像を使って、出欠確認を行うサンプルアプリケーションです。カメラに写っている人の顔を検知して出席登録します。",
+      image: "/image/match_face.png",
     },
     {
       linkPass: "/analysisFace",
       title: "表情分析",
-      detail: "説明",
-      image: null,
+      detail: "カメラに写っている人の表情を分析して、その結果を表示するサンプルアプリケーションです。カメラに写っている人の顔を検知してその顔の表情を分析します。",
+      image: "/image/analysis_face.png",
     },
   ];
 
   return (
     <>
       <header>
-        <h1>Rekognition</h1>
+        <h1>画像解析アプリケーション</h1>
       </header>
 
       <div className="container">
@@ -40,10 +41,13 @@ const App = () => {
             <div key={content.title}>
               <Link href={content.linkPass}>
                 <div className="card card-skin">
-                  <img
+                  <Image
                     className="card__imgframe"
                     src={content.image ?? "/image/No-Image.png"}
                     alt=""
+                    width={300}
+                    height={200}
+                    objectFit="contain"
                   />
                   <div className="card__textbox">
                     <div className="card__titletext">{content.title}</div>
@@ -67,7 +71,7 @@ const App = () => {
         font-size: 30px;
         color: #fff;
         text-align: center;
-        padding: 10px;
+        padding: 20px;
       }
 
       .container {
@@ -95,12 +99,12 @@ const App = () => {
         margin-top: 10px;
       }
       .card__titletext{
-        font-size: 20px;
+        font-size: 24px;
         font-weight: bold;
         line-height: 125%;
       }
       .card__overviewtext{
-        font-size: 12px;
+        font-size: 18px;
         line-height: 150%;
       }
       .card-skin{
