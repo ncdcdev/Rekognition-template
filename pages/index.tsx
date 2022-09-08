@@ -7,25 +7,25 @@ const App = () => {
       linkPass: "/label",
       title: "人数検出",
       detail: "カメラに写っている人を検知して、その人数を表示するサンプルアプリケーションです。人を検知すると画像内で赤枠で囲んで表示します。",
-      image: "/image/detect_person.png",
+      image: null,
     },
     {
       linkPass: "/indexFace",
       title: "メンバー登録",
       detail: "メンバーの顔の画像を登録するンプルアプリケーションです。顔と名前を登録すると出欠確認が出来るようになります。",
-      image: "/image/register_face.png",
+      image: null,
     },
     {
       linkPass: "/matchFace",
       title: "出欠確認",
       detail: "メンバー登録アプリケーションで登録した顔の画像を使って、出欠確認を行うサンプルアプリケーションです。カメラに写っている人の顔を検知して出席登録します。",
-      image: "/image/match_face.png",
+      image: null,
     },
     {
       linkPass: "/analysisFace",
       title: "表情分析",
       detail: "カメラに写っている人の表情を分析して、その結果を表示するサンプルアプリケーションです。カメラに写っている人の顔を検知してその顔の表情を分析します。",
-      image: "/image/analysis_face.png",
+      image: null,
     },
   ];
 
@@ -45,7 +45,7 @@ const App = () => {
                     className="card__imgframe"
                     src={content.image ?? "/image/No-Image.png"}
                     alt=""
-                    width={300}
+                    width={320}
                     height={200}
                     objectFit="contain"
                   />
@@ -90,9 +90,8 @@ const App = () => {
       }
       .card__textbox{
         width: 100%;
-        height: auto;
+        height: 250px;
         padding: 20px 18px;
-        background: #ffffff;
         box-sizing: border-box;
       }
       .card__textbox > * + *{
