@@ -3,6 +3,7 @@ import axios from "axios";
 import Webcam from "react-webcam";
 import { EmotionData } from "../api/emotions";
 import dynamic from 'next/dynamic';
+import Link from "next/link";
 
 const WIDTH = 320 * 1.5;
 const HEIGHT = 240 * 1.5;
@@ -88,8 +89,11 @@ export const App = () => {
 
   return (
     <div>
-      <header className="flex-wrap bg-teal-500 text-white p-6 mb-6">
+      <header className="flex bg-teal-500 text-white p-6 mb-6">
         <h1>表情分析</h1>
+        <div className="ml-auto mr-5">
+          <Link href="/">ホーム画面に戻る</Link>
+        </div>
       </header>
       <button className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded mx-1 my-1" onClick={() => setStart(true)}>Start</button>
       <button className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded mx-1 my-1" onClick={() => setStart(false)}>Stop</button>

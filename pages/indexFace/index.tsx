@@ -2,6 +2,7 @@ import { useRef, useState, useCallback } from "react";
 import Webcam from "react-webcam";
 import axios from "axios";
 import { Data as DetectLabelsData } from "../api/detectLabels";
+import Link from "next/link";
 
 const WIDTH = 320 * 1.5;
 const HEIGHT = 240 * 1.5;
@@ -33,8 +34,11 @@ export const App = () => {
   const { webcamRef, capture, img, result, name, setName } = useApp();
   return (
     <div>
-      <header className="flex-wrap bg-teal-500 text-white p-6 mb-6">
-        <h1>メンバ登録</h1>
+      <header className="flex bg-teal-500 text-white p-6 mb-6">
+        <h1>メンバー登録</h1>
+        <div className="ml-auto mr-5">
+          <Link href="/">ホーム画面に戻る</Link>
+        </div>
       </header>
       <div style={{ display: "flex" }}>
         <div>
